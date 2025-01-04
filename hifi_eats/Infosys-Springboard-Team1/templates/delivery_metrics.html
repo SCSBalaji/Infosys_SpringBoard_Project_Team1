@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Metrics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Delivery Metrics</h1>
+    
+    <form method="POST" action="{{ url_for('delivery_metrics') }}">
+        <label for="agent_id">Enter Agent ID:</label>
+        <input type="number" id="agent_id" name="agent_id" value="{{ agent_id }}">
+        <button type="submit" class="btn">Generate Metrics</button>
+    </form>
+    
+    <h2>Average Delivery Time</h2>
+    {% if avg_time_plot_url %}
+        <img src="data:image/png;base64,{{ avg_time_plot_url }}" alt="Average Delivery Time Bar Chart">
+    {% else %}
+        <p>No data available for Average Delivery Time.</p>
+    {% endif %}
+    
+    <h2>On-Time Delivery Rate</h2>
+    {% if on_time_rate_plot_url %}
+        <img src="data:image/png;base64,{{ on_time_rate_plot_url }}" alt="On-Time Delivery Rate Pie Chart">
+    {% else %}
+        <p>No data available for On-Time Delivery Rate.</p>
+    {% endif %}
+    
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+</body>
+</html>

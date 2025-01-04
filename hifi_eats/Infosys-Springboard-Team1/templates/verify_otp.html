@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code - HiFi Delivery Eats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verify_otp.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="static\images\hifilogo.png" alt="HiFi Delivery Eats Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('signin') }}">Sign In</a>
+            <a href="{{ url_for('signup') }}">Register</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h1>Forgot Password?</h1>
+                <p>Please enter the code sent to 0123*****89</p>
+                <form action="{{ url_for('verify_otp') }}" method="POST">
+                    <label for="contact"><b>Enter the verification code sent to your registered id</b></label>
+                    <input type="text" id="contact" name="verification_code" placeholder="Enter 6 digits code sent to your registered id" required>
+                    <button type="submit">Submit</button>
+                </form>
+                <p class="center-text">or continue with</p>
+                <div class="social-icons">
+                    <a href="{{ url_for('google_login') }}"><img src="{{ url_for('static', filename='images/google.jpg') }}" alt="Google"></a>
+                    <a href="{{ url_for('facebook_login') }}"><img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook"></a>
+                    <a href="{{ url_for('twitter_login') }}"><img src="{{ url_for('static', filename='images/twitter.png') }}" alt="Twitter"></a>
+                    <img src="{{ url_for('static', filename='images/x_logo.jpg') }}" alt="X">
+                </div>
+            </div>
+            <div class="image-section">
+                <img src="{{ url_for('static', filename='images/pancakes.jpg') }}" alt="Delicious Food">
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/verify_otp.js') }}"></script>
+</body>
+</html>

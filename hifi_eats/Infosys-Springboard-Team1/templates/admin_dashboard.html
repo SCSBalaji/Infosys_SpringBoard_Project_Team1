@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HiFi Delivery Eats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/hifilogo.png') }}" alt="HiFi Delivery Eats Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Manage your users and assign roles here.</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user['email'] }}</td>
+                    <td>{{ user['full_name'] }}</td>
+                    <td>{{ user['phone_number'] }}</td>
+                    <td>{{ user['role_name'] or 'Unassigned' }}</td> <!-- Display role or "Unassigned" -->
+                    <td>
+                        <a href="{{ url_for('edit_user', user_id=user['user_id']) }}" class="btn-small">Edit</a>
+                        <a href="{{ url_for('assign_role', user_id=user['user_id']) }}" class="btn-small">Assign Role</a>
+                        <form method="POST" action="{{ url_for('delete_user', user_id=user['user_id']) }}" style="display:inline;">
+                            <button type="submit" class="btn-small">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Button to view top-selling items -->
+        <a href="{{ url_for('top_selling_items') }}" class="btn">View Top-Selling Items</a>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+</body>
+</html>

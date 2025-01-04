@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Trends</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Sales Trends</h1>
+    
+    {% if plot_url %}
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Sales Trends Graph">
+    {% else %}
+        <p>No graph available for the selected period and chart type.</p>
+    {% endif %}
+    
+    <form method="GET" action="{{ url_for('sales_trends') }}">
+        <label for="period">Period:</label>
+        <select id="period" name="period">
+            <option value="daily" {% if period == 'daily' %}selected{% endif %}>Daily</option>
+            <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Weekly</option>
+            <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Monthly</option>
+        </select>
+        
+        <label for="chart_type">Chart Type:</label>
+        <select id="chart_type" name="chart_type">
+            <option value="line" {% if chart_type == 'line' %}selected{% endif %}>Line</option>
+            <option value="bar" {% if chart_type == 'bar' %}selected{% endif %}>Bar</option>
+        </select>
+        
+        <button type="submit" class="btn">Generate Chart</button>
+    </form>
+    
+    <form method="GET" action="{{ url_for('download_sales_report') }}">
+        <input type="hidden" name="period" value="{{ period }}">
+        <input type="hidden" name="chart_type" value="{{ chart_type }}">
+        <button type="submit" class="btn">Download Report</button>
+    </form>
+    
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+</body>
+</html>

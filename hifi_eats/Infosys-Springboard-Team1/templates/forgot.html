@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - HiFi Delivery Eats</title>
+    <link rel="stylesheet" href="static\css\forgot.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="{{ url_for('static', filename='images/hifilogo.png') }}" alt="Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('signin') }}">Sign In</a>
+            <a href="{{ url_for('signup') }}">Register</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <div class="main-section">
+        <!-- Background Image -->
+        <div class="background-image"></div>
+
+        <!-- Container -->
+        <div class="container">
+            <!-- Forgot Password Section -->
+            <div class="forgot-password">
+                <h2>Forgot Password?</h2>
+                <p>Please enter your registered Phone No/Email for verification</p>
+                <form action="{{ url_for('forgot') }}" method="POST">
+                    <label for="input">Phone Number or E-Mail</label>
+                    <input type="text" id="input" name="contact_info" placeholder="8809845679" required>
+                    <button type="submit" class="next-btn">Next</button>
+                </form>
+                <div class="social-login">
+                    <p>Or Continue with</p>
+                    <div class="icons">
+                        <a href="{{ url_for('google_login') }}"><img src="{{ url_for('static', filename='images/google.jpg') }}" alt="Google"></a>
+                        <a href="{{ url_for('facebook_login') }}"><img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook"></a>
+                        <a href="{{ url_for('twitter_login') }}"><img src="{{ url_for('static', filename='images/twitter.png') }}" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Section -->
+            <div class="image-section">
+                <img src="{{ url_for('static', filename='images/pancakes.jpg') }}" alt="Pancakes">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

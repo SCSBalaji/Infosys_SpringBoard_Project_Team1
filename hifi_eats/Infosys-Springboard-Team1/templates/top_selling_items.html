@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Selling Items</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Top Selling Items</h1>
+    
+    <form method="POST" action="{{ url_for('top_selling_items') }}">
+        <label for="month">Select Month:</label>
+        <input type="month" id="month" name="month" value="{{ selected_month }}">
+        <button type="submit" class="btn">Generate Chart</button>
+    </form>
+    
+    {% if plot_url %}
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Top Selling Items Pie Chart">
+    {% else %}
+        <p>Select a month to view the top selling items.</p>
+    {% endif %}
+    
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+</body>
+</html>

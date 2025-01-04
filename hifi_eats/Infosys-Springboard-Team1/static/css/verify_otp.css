@@ -1,0 +1,242 @@
+/* General body styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to top, #ffaaaa, #f8ff7c);
+    
+    /*background: url('/Infosys-Springboard-Team1static/images/background_image.jpg') no-repeat center center fixed;*/
+    background-size: cover; /* Ensure the background image covers the entire page */
+}
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url('static\images\pancakes.jpg') center center no-repeat;
+    height: 50%;
+    width: 100%;
+    opacity: 0.5; 
+    z-index: 1;
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #ffd3d3;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo img {
+    height: 50px;
+    margin-left: 20px;
+}
+
+.navbar .nav-links a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.navbar .nav-links a:hover {
+    color: #ff6565;
+}
+
+/* Container styling */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+/* Content styling */
+.content {
+    display: flex;
+    width: 80%;
+    max-width: 1200px;
+    background-color: #FCF0F0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Image section styling */
+.image-section {
+    flex: 1;
+    width: 100%;
+    height: auto;
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+}
+
+.image-section img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+/* Form section */
+.form-section {
+    flex: 1;
+    padding: 80px;
+}
+
+.form-section h3 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.form-section h4 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-section input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    background-color: #F3E9B5;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-section input:focus {
+    border-color: #ff6565;
+    outline: none;
+}
+
+.form-section button {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #ff6565;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-section button:hover {
+    background-color: #e04e4e;
+}
+
+.form-section p {
+    margin-top: 50px;
+    font-size: 18px;
+}
+
+.form-section p a {
+    color: #ff6565;
+    text-decoration: none;
+}
+
+.form-section p a:hover {
+    text-decoration: underline;
+}
+
+/* Center text styling */
+.center-text {
+    text-align: center;
+}
+
+/* Social icons styling */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icons img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.social-icons img:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .image-section {
+        height: 200px;
+        padding: 20px;
+    }
+
+    .form-section {
+        padding: 40px;
+    }
+
+    .form-section h1 {
+        font-size: 20px;
+    }
+
+    .form-section p {
+        font-size: 16px;
+    }
+
+    .form-section button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar .nav-links {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar .nav-links a {
+        margin: 5px 0;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .form-section h1 {
+        font-size: 18px;
+    }
+
+    .form-section p {
+        font-size: 14px;
+    }
+
+    .form-section button {
+        font-size: 12px;
+    }
+}

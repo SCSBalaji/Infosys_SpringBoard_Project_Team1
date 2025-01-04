@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+    body, h1, h2, p, ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #ffe6e698;
+    }
+
+    /* Container */
+    .container {
+        display: flex;
+        flex-wrap: nowrap;
+        height: 100vh;
+        position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background: rgb(255, 142, 142);
+
+        color: white;
+        height: 100vh;
+        padding: 20px 10px;
+        transition: width 0.3s ease, background 0.3s ease;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 100;
+    }
+
+    .sidebar:hover {
+        background: #ff8282;
+    }
+
+    .sidebar .logo {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        
+    }
+
+    .sidebar .menu ul {
+        padding: 0;
+    }
+
+
+    .sidebar .menu ul li {
+    width: 100%; /* Ensures the menu items take the full width of the sidebar */
+    transition: all 0.3s ease; /* Smooth transition for both text and width */
+    padding: 10px 20px; /* Add some padding for the initial size of the rectangle */
+    
+     }
+
+    .sidebar .menu ul li a {
+        display: block;
+        font-size: 16px;
+        transition: font-size 0.3s ease; /* Smooth transition for text size */
+        text-decoration: none;
+    }
+
+    .sidebar .menu ul li:hover {
+        background-color: rgb(255, 84, 84);
+        border-radius: 5%;
+        transform: scale(1.1); /* Enlarge the entire item slightly */
+        padding: 12px 25px; /* Increase the padding to make the rectangle larger */
+    }
+
+    .sidebar .menu ul li:hover a {
+        font-size: 18px; /* Increase the font size of the text */
+    }
+
+
+    .sidebar .menu ul li a i {
+        margin-right: 10px;
+        color: yellow;
+    }
+
+    .sidebar .menu ul li a.active {
+        font-weight: bold;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        transition: padding 0.3s ease;
+        margin-left: 250px;
+        transition: margin-left 0.3s ease;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+     .header .search-bar {
+        background-color:rgb(255, 255, 196);
+        padding: 10px;
+        width: 700px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: width 0.3s ease;
+        text-align: left; /* Align text inside the search bar */
+        display: block; /* Ensures the element is block-level (occupying full width) */
+        margin-right: 50vh; /* Aligns the search bar to the left */
+        }
+
+
+    .header .search-bar:focus {
+        width: 350px;
+        border-color: #007bff;
+    }
+
+    .header .user-info {
+        display: flex;
+        align-items: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .header .user-info .avatar {
+        border-radius: 50%;
+        margin-left: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .header .user-info:hover .avatar {
+        transform: rotate(360deg);
+    }
+
+    .dashboard-header h1 {
+        margin-bottom: 20px;
+        animation: fadeIn 1s ease-out;
+        margin-left: 10px;
+    }
+
+            /* IPO Stats */
+            /* Larger Box for IPO Stats */
+    .ipo-stats-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        margin-left: 10px;
+    }
+
+    /* IPO Stats Layout */
+    .ipo-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        margin-left:10px;
+    }
+
+    /* Individual IPO Box Styles */
+    .ipo-box {
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        flex: 1;
+        color: white;
+        padding: 40px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .ipo-box:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .ipo-box.gain {
+        background: #28a745;
+    }
+
+    .ipo-box.loss {
+        background: #dc3545;
+    }
+
+    .ipo-box.total {
+        background: #ffc107;
+    }
+
+
+    .ipo-box.gain {
+        background: #28a745;
+    }
+
+    .ipo-box.loss {
+        background: #dc3545;
+    }
+
+    .ipo-box.total {
+        background: #ffc107;
+    }
+
+            /* Quick Links */
+    .quick-links {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        margin-left: 10px;
+    }
+
+    .quick-links h2 {
+        margin-bottom: 15px;
+    }
+
+    .quick-links ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: flex-start;
+        padding: 0; /* Ensure no extra padding is applied to the ul */
+        margin: 0; /* Remove any default margin */
+    }
+
+    .quick-links ul li {
+        display: flex;
+        align-items: center;
+        background: #f1f1f1;
+        padding: 10px 15px; /* Ensure even padding */
+        border-radius: 10px;
+        width: 200px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for box-shadow */
+    }
+
+    .quick-links ul li:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Add subtle shadow effect on hover */
+    }
+
+    .quick-links ul li i {
+        font-size: 24px;
+        margin-right: 10px;
+        transition: color 0.3s ease;
+    }
+
+    .quick-links ul li a {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 16px;
+        display: block;
+        transition: color 0.3s ease;
+    }
+
+    .quick-links ul li:hover i {
+        color: #fee337; /* Yellow color on hover for icon */
+    }
+
+    .quick-links ul li a:hover {
+        color: #0056b3; /* Darker blue for the link */
+    }
+        .hamburger {
+              /* Hidden by default */
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            color: #333;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .hamburger i{
+            display:none;
+        }
+
+
+    /* Main Board IPO */
+    .main-board-ipo .chart {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .main-board-ipo .donut-chart {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: conic-gradient(#28a745 0% 50%, #ffc107 50% 75%, #dc3545 75% 100%);
+        transition: transform 0.5s ease;
+    }
+
+    .main-board-ipo .donut-chart:hover {
+        transform: rotate(360deg);
+    }
+
+    .logo h2 {
+        color: rgb(252, 0, 0);
+        text-align: left;
+    }
+
+    .dashboard-header h1{
+        margin-left:10px;
+    }
+
+
+                /* Layout for Charts */
+        .main-board-ipo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        /* Individual Chart Styling */
+        .chart {
+            background: #f8fad3;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(77, 0, 0, 0.503);
+        }
+
+        /* Styling for Titles */
+        .chart h3 {
+            margin-top: 15px;
+        }
+
+        /* Placeholder styles for the charts */
+        .donut-chart, .stock-price-chart, .ipo-performance-chart, .volume-chart {
+            width: 50%;
+            height: 200px;
+            background: #e0e0e0; /* Light gray for placeholder */
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display:flex;
+        }
+        
+        .chart {
+            position: relative;
+            height: 300px; /* Set the height as required */
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+
+        .chart canvas {
+            width: 100%;
+            height: 100px;
+        }
+
+
+    /* Animation */
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .sidebar {
+            width: 200px;
+            margin-left: 0;
+        }
+
+        .main-content {
+            margin-left: 200px;
+        }
+    }
+
+    /* Small screens (Tablets and smaller devices: max-width 768px) */
+    @media (max-width: 768px) {
+        .hamburger {
+            display: block;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(-100%);
+            background-color: blue;
+            z-index: 1000;
+            height: 100%;
+            padding-top: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.open {
+            transform: translateY(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding-top: 50px;
+        }
+
+        .header .search-bar {
+            width: 80%;
+            margin-left: 10px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>HiFi Delivery Eats</h2>
+            </div>
+            <div class="menu">
+                <h3>Main Menu</h3>
+                <ul>
+                    <li><a href="#" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Reports</a></li>
+                    <li><a href="#" data-section="manage-menu"><i class="fas fa-shopping-cart"></i> Admin Notifications</a></li>
+                    <li><a href="#" data-section="sales-insights"><i class="fas fa-cogs"></i> Sales Insights</a></li>
+                    <li><a href="#" data-section="customer-insights"><i class="fas fa-comment"></i> Customer Insights</a></li>
+                </ul>
+                <h3>Others</h3>
+                <ul>
+                    <li><a href="#" data-section="settings"><i class="fas fa-cogs"></i> Settings</a></li>
+                    <li><a href="#" data-section="api-manager"><i class="fas fa-shopping-cart"></i> API Manager</a></li>
+                    <li><a href="#" data-section="accounts"><i class="fas fa-cogs"></i> Accounts</a></li>
+                    <li><a href="#" data-section="help"><i class="fas fa-comment"></i> Help</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="hamburger" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <input type="text" class="search-bar" placeholder="Search...">
+                <div class="user-info">
+                    <h3>Hi, Vishal</h3>
+                    <img class="avatar" src="https://www.w3schools.com/w3images/avatar2.png" alt="User Avatar" width="40">
+                </div>
+            </div>
+            <div id="mainContent">
+                <div class="dashboard-header">
+                    <h1>Admin Dashboard</h1>
+                </div>
+
+                <div class="ipo-stats-container">
+                    <div class="ipo-stats">
+                        <div class="ipo-box gain">
+                            <h3>Gains For November</h3>
+                            <p>50%</p>
+                        </div>
+                        <div class="ipo-box loss">
+                            <h3>Losses for November</h3>
+                            <p>30%</p>
+                        </div>
+                        <div class="ipo-box total">
+                            <h3>Total in November</h3>
+                            <p>80%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-links">
+                    <h2>Records</h2>
+                    <ul>
+                        <li><i class="fas fa-chart-bar"></i><a href="#">Customer Management</a></li>
+                        <li><i class="fas fa-clipboard-list"></i><a href="#">Customer Data</a></li>
+                        <li><i class="fas fa-calendar-day"></i><a href="#">Product Performance</a></li>
+                        <li><i class="fas fa-comments"></i><a href="#">Sentiment Analysis Reports</a></li>
+                    </ul>
+                </div>
+
+                <div class="quick-links">
+                    <h2>Important Links</h2>
+                    <p>Find direct links to view sales data, insights, revenue generation, and customer records</p>
+                    <ul>
+                        <li><i class="fas fa-chart-bar"></i><a href="#">Monthly Sales Report</a></li>
+                        <li><i class="fas fa-clipboard-list"></i><a href="#">Revenue Generated</a></li>
+                        <li><i class="fas fa-calendar-day"></i><a href="#">Monthly Sales Report</a></li>
+                        <li><i class="fas fa-comments"></i><a href="#">Delivery Metrics</a></li>
+                    </ul>
+                </div>
+
+                <div class="ipo-stats-container">
+                    <div class="main-board-ipo">
+                        <div class="chart">
+                            <canvas id="donutChart"></canvas>
+                            <h3>Popular Items</h3>
+                        </div>
+                        <div class="chart">
+                            <canvas id="stockPriceChart"></canvas>
+                            <h3>Sales Report</h3>
+                        </div>
+                        <div class="chart">
+                            <canvas id="ipoPerformanceChart"></canvas>
+                            <h3>Delivery Metrics</h3>
+                        </div>
+                        <div class="chart">
+                            <canvas id="volumeChart"></canvas>
+                            <h3>Sentiment Analysis</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script>
+
+            
+           // Donut Chart
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+const donutChart = new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Successful', 'Failed', 'Pending'],
+        datasets: [{
+            data: [70, 20, 10], // Replace with real data
+            backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+            borderColor: ['#28a745', '#dc3545', '#ffc107'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                enabled: true
+            }
+        }
+    }
+});
+
+//(Line Chart Example)
+const stockPriceCtx = document.getElementById('stockPriceChart').getContext('2d');
+const stockPriceChart = new Chart(stockPriceCtx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+            label: 'Item Price',
+            data: [150, 200, 180, 210, 250], // Replace with real data
+            borderColor: '#007bff',
+            borderWidth: 2,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                enabled: true
+            }
+        }
+    }
+});
+
+//  (Bar Chart Example)
+const ipoPerformanceCtx = document.getElementById('ipoPerformanceChart').getContext('2d');
+const ipoPerformanceChart = new Chart(ipoPerformanceCtx, {
+    type: 'bar',
+    data: {
+        labels: ['IPO1', 'IPO2', 'IPO3', 'IPO4'],
+        datasets: [{
+            label: 'Performance',
+            data: [90, 65, 75, 85], // Replace with real data
+            backgroundColor: '#ffc107',
+            borderColor: '#ffc107',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                enabled: true
+            }
+        }
+    }
+});
+
+// Volume Chart (Radar Chart Example)
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            const volumeChart = new Chart(volumeCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                    datasets: [{
+                        label: 'Volume',
+                        data: [200, 150, 180, 220, 250], // Replace with real data
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
+                }
+            });
+
+        document.addEventListener('DOMContentLoaded', () => {
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const hamburger = document.querySelector('.hamburger');
+        if (sidebar.style.left === '0px') {
+            sidebar.style.left = '-250px';
+            hamburger.classList.remove('active');
+        } else {
+            sidebar.style.left = '0px';
+            hamburger.classList.add('active');
+        }
+    }
+
+    const sidebarLinks = document.querySelectorAll('.sidebar .menu ul li a');
+    const mainContent = document.getElementById('mainContent');
+
+    const sections = {
+        dashboard: `<h1>Reports Section</h1><p>This is the reports section.</p>`,
+        'manage-menu': `<h1>Admin Notifications </h1><p>Here you can get notifications.</p>`,
+        'sales-insights': `<h1>Sales Insights</h1><p>View insights on your sales data.</p>`,
+        'customer-insights': `<h1>Customer Insights</h1><p>Analyze customer feedback and data.</p>`,
+        settings: `<h1>Settings</h1><p>Manage your account settings here.</p>`,
+        'api-manager': `<h1>API Manager</h1><p>Manage your API integrations here.</p>`,
+        accounts: `<h1>Accounts</h1><p>View and manage account information.</p>`,
+        help: `<h1>Help</h1><p>Get help and support here.</p>`
+    };
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = link.dataset.section;
+            console.log(`Section clicked: ${section}`); // Debug log
+            if (sections[section]) {
+                mainContent.innerHTML = sections[section];
+            } else {
+                console.error(`No content defined for section: ${section}`);
+            }
+        });
+    });
+});
+
+    </script>
+</body>
+
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="static\css\signup.css">
+    <style>
+        /* Popup Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-success {
+            color: #5cb85c;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="{{ url_for('static', filename='images/hifilogo.png') }}" alt="Logo">
+            <span>Hifi Delivery Eats</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="{{ url_for('signin') }}">Sign In</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <div class="main-container">
+        <div class="left-panel">
+            <h2>Food Delivery</h2>
+            <p>A few steps to create your restaurant or personal account</p>
+            <img class="hifilogo" src="{{ url_for('static', filename='images/hifilogo.png') }}" alt="hifologo">
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <h2>Personal Details</h2>
+            <form action="{{ url_for('signup') }}" method="POST" id="signup-form">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+
+                <label for="phone-number">Phone Number</label>
+                <input type="text" id="phone-number" name="phone-number" placeholder="Enter your phone number" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                <p id="error-message" class="error-message"></p>
+                <button type="submit" class="btn">Continue</button>
+
+                <p class="signup-link">Already have an account? <a href="{{ url_for('signin') }}">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message" class="modal-success"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const errorMessage = "{{ get_flashed_messages(with_categories=True) | selectattr('0', 'equalto', 'error') | map(attribute='1') | join(', ') }}";
+            const successMessage = "{{ get_flashed_messages(with_categories=True) | selectattr('0', 'equalto', 'success') | map(attribute='1') | join(', ') }}";
+
+            if (errorMessage) {
+                const errorElement = document.getElementById('error-message');
+                errorElement.textContent = errorMessage;
+            } else if (successMessage) {
+                const modal = document.getElementById('myModal');
+                const modalMessage = document.getElementById('modal-message');
+                const span = document.getElementsByClassName('close')[0];
+                
+                modalMessage.textContent = successMessage;
+                modal.style.display = 'block';
+
+                span.onclick = function() {
+                    modal.style.display = 'none';
+                }
+
+                window.onclick = function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
