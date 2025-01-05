@@ -3,156 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi Fi Eats</title>
-    <link rel="stylesheet" href="/static/css/home.css">
+    <title>HiFi Eats</title>
     <style>
+        /* General body styling */
         body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #F17272, #F5E476);
-    height: 100vh;
-}
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #F17272, #fff3a7);
+            height: 100vh;
+            animation: fadeIn 1s ease-in-out;
+        }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #FFD3D3;
-}
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #FFD3D3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
 
-.navbar a {
-    text-decoration: none;
-    color: black;
-    margin: 0 10px;
-}
+        /* Navbar links styled as buttons */
+        .navbar a {
+            text-decoration: none;
+            color: black;
+            margin: 0 10px;
+            font-weight: bold;
+            padding: 10px 20px; /* Button-like padding */
+            border: 2px solid #ff6f61; /* Border for buttons */
+            border-radius: 5px; /* Rounded corners for a button look */
+            background-color: #FFD3D3; /* Light background color for buttons */
+            transition: all 0.3s ease; /* Transition effect for smooth hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for 3D effect */
+        }
 
-.hero {
-    text-align: center;
-    padding: 50px 20px;
-    color: white;
-    position: relative;
-    background-color: rgba(0, 0, 0, 0);
-    height: 50vh;
-}
+        /* Hover effect for navbar links */
+        .navbar a:hover {
+            background-color: #ff6f61; /* Change background on hover */
+            color: white; /* Change text color on hover */
+            transform: scale(1.1); /* Slightly enlarge the button */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover for 3D effect */
+        }
 
-.hero::before {
-    content: "";
-    position: absolute;
-    top: 0; /* Start the image in the middle */
-    left: 0;
-    width: 100%;
-    height: 80%; /* Covers only the middle 50% of the screen */
-    background-image: url('/static/images/hifilogo.png');
-    background-size: cover;
-    background-position: center;
-    filter: brightness(0.7);
-    z-index: -1;
-}
+        /* Animation for navbar links on page load */
+        .navbar a {
+            opacity: 0;
+            animation: fadeInNav 1.5s ease-in-out forwards; /* Fade-in effect */
+        }
 
-.search-bar {
-    margin: 20px 0;
-}
+        /* Animation delays for each navbar link */
+        .navbar a:nth-child(1) {
+            animation-delay: 0.5s; /* Delay for 'Home' link */
+        }
 
-.search-bar input {
-    width: 50%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        .navbar a:nth-child(2) {
+            animation-delay: 1s; /* Delay for 'Sign In' link */
+        }
 
-.search-bar button {
-    padding: 10px 20px;
-    font-size: 1em;
-    margin-left: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff6f61;
-    color: white;
-    cursor: pointer;
-}
+        .navbar a:nth-child(3) {
+            animation-delay: 1.5s; /* Delay for 'Register' link */
+        }
 
-.search-bar button:hover {
-    background-color: #e05550;
-}
+        .navbar a:nth-child(4) {
+            animation-delay: 2s; /* Delay for 'Contact' link */
+        }
 
-.phone-images {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
+        /* Keyframe for navbar link fade-in and slide effect */
+        @keyframes fadeInNav {
+            from {
+                opacity: 0;
+                transform: translateY(-10px); /* Start slightly above */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* End at normal position */
+            }
+        }
 
-.phone-images img {
-    width: 150px;
-    margin: 0 10px;
-}
+        /* Hero Section styling */
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            color: white;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0);
+            height: 50vh;
+            animation: slideIn 1s ease-in-out;
+        }
 
-.btn {
-    padding: 10px 20px;
-    font-size: 1em;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        /* Background image for hero section */
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            background-image: url('/static/images/hifilogo.png');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.7);
+            z-index: -1;
+            animation: zoomIn 2s ease-out;
+        }
 
-.btn-playstore {
-    background-color: #ff6f61;
-    color: white;
-}
+        /* Hero section heading styling */
+        .hero h1 {
+            font-size: 3em;
+            font-weight: bold;
+            color: #f93232;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeInText 1.5s ease-in-out forwards, textShadowEffect 2s ease-in-out infinite alternate;
+            animation-delay: 0.5s;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
 
-.btn-appstore {
-    background-color: #ffffff;
-    color: #ff6f61;
-    border: 2px solid #ff6f61;
-}
+        /* Hero section paragraph styling */
+        .hero p {
+            font-size: 1.2em;
+            color: #fff;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeInText 1.5s ease-in-out forwards, textShadowEffect 2s ease-in-out infinite alternate;
+            animation-delay: 1s;
+        }
 
+        /* Keyframe Animations */
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes textShadowEffect {
+            0% {
+                text-shadow: 0 0 10px rgba(108, 2, 2, 0.8), 0 0 20px rgba(198, 0, 0, 0.6);
+            }
+            50% {
+                text-shadow: 0 0 15px rgb(93, 66, 17), 0 0 25px rgba(112, 83, 28, 0.61);
+            }
+            100% {
+                text-shadow: 0 0 20px rgb(57, 85, 85), 0 0 30px rgba(0, 255, 255, 0.6);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Search Bar styling */
+        .search-bar {
+            margin: 20px 0;
+            opacity: 0;
+            animation: fadeInText 1.5s ease-in-out forwards;
+            animation-delay: 1.5s;
+        }
+
+        .search-bar input {
+            width: 50%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ff958a;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff6f61;
+            color: rgb(255, 255, 255);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #e05550;
+        }
+
+        /* Button Animations */
+        .btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-playstore {
+            background-color: #ff6f61;
+            color: white;
+        }
+
+        .btn-appstore {
+            background-color: #ffffff;
+            color: #ff6f61;
+            border: 2px solid #ff6f61;
+        }
+
+        .btn-playstore:hover {
+            background-color: #ff6f61;
+            color: rgb(255, 250, 195);
+        }
+
+        .btn-appstore:hover {
+            background-color: #ffffff;
+            color: #ff9e95;
+            border: 2px solid #ff6f61;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Phone Images styling */
+        .phone-images {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInText 1.5s ease-in-out forwards;
+            animation-delay: 2s;
+        }
+
+        .phone-images img {
+            width: 150px;
+            margin: 0 10px;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .phone-images img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(1.1);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Navbar section -->
     <div class="navbar">
         <div class="logo">
             <img src="/static/images/hifilogo.png" alt="Logo" style="height: 40px;">
         </div>
         <div>
-            <a href="#home">Home</a>
+            <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('signin') }}">Sign In</a>
             <a href="{{ url_for('signup') }}">Register</a>
             <a href="#contact">Contact</a>
         </div>
     </div>
 
+    <!-- Hero section -->
     <div class="hero">
         <h1>One Stop Destination for All Your Hunger</h1>
         <p>Why stay hungry when you can order from Hi Fi Eats</p>
         <button class="btn btn-playstore">Playstore</button>
         <button class="btn btn-appstore">App Store</button>
 
-        <!-- <div class="search-bar">
-            <input type="text" placeholder="Search for delicious food...">
-            <button>Search</button>
-        </div> -->
+        <!-- Search bar -->
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Search for delicious food...">
             <button onclick="searchItem()">Search</button>
         </div>
         <div id="search-result"></div>
-        
 
+        <!-- Phone images -->
         <div class="phone-images">
             <img src="/static/images/pancakes.jpg" alt="Phone 1">
             <img src="/static/images/hifilogo.png" alt="Phone 2">
         </div>
     </div>
     <script>
+        // Function to handle search item
         function searchItem() {
             const itemName = document.getElementById('search-input').value;
             if (!itemName) {
                 document.getElementById('search-result').innerText = "Please enter an item name.";
                 return;
             }
-        
+
+            // Fetch request to search for the item
             fetch('/search', {
                 method: 'POST',
                 headers: {
@@ -173,7 +371,6 @@
                 document.getElementById('search-result').innerText = "An error occurred.";
             });
         }
-        </script>
-        
+    </script>
 </body>
 </html>
