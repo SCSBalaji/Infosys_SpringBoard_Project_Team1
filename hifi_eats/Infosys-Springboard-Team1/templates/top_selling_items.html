@@ -3,24 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Selling Items</title>
+    <title>Top-Selling Items</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Reset some basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9a18b;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            text-align: center;
+            transition: background-color 0.3s ease; /* Smooth transition for background color */
+        }
+
+        /* Header Styles */
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            transition: color 0.3s ease; /* Smooth transition for header color */
+        }
+
+        /* Image Styling */
+        img {
+            max-width: 60%;  /* Reduce width to 60% */
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transform and shadow transition */
+        }
+
+        /* Image hover effect */
+        img:hover {
+            transform: scale(1.05); /* Slightly enlarge the image */
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* More pronounced shadow on hover */
+        }
+
+        /* Button Styles */
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 16px;  /* Smaller padding */
+            font-size: 0.9rem;  /* Smaller font size */
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: auto;  /* Ensure the button moves to the bottom */
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
+        }
+
+        /* Button hover effect */
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px); /* Button lifts slightly on hover */
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            /* For smaller screens, make the image even smaller */
+            img {
+                max-width: 50%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Top Selling Items</h1>
-    
-    <form method="POST" action="{{ url_for('top_selling_items') }}">
-        <label for="month">Select Month:</label>
-        <input type="month" id="month" name="month" value="{{ selected_month }}">
-        <button type="submit" class="btn">Generate Chart</button>
-    </form>
-    
-    {% if plot_url %}
-        <img src="data:image/png;base64,{{ plot_url }}" alt="Top Selling Items Pie Chart">
-    {% else %}
-        <p>Select a month to view the top selling items.</p>
-    {% endif %}
-    
+    <h1>Top-Selling Items</h1>
+    <img src="data:image/png;base64,{{ plot_url }}" alt="Top-Selling Items Chart">
     <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
 </body>
 </html>
