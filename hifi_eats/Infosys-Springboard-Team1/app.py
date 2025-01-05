@@ -26,7 +26,8 @@ load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
-DATABASE = 'C:\\Users\\HP CORE I5\\Downloads\\Infosys_SpringBoard_Project_Team1\\hifi_eats\\Infosys-Springboard-Team1\\existing_database.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, 'existing_database.db')
 JWT_SECRET = 'your_jwt_secret'  # Add a secret key for JWT
 
 # Configuring Flask-Mail

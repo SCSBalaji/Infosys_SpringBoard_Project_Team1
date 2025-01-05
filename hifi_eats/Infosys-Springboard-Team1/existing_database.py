@@ -2,8 +2,8 @@ import sqlite3
 import bcrypt
 import os
 
-# Path to your SQLite database
-DATABASE = os.path.abspath('C:\\Users\\HP CORE I5\\Downloads\\Infosys_SpringBoard_Project_Team1\\hifi_eats\\Infosys-Springboard-Team1\\existing_database.db')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, 'existing_database.db')
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
