@@ -433,8 +433,8 @@
             <div class="menu">
                 <h3>Main Menu</h3>
                 <ul>
-                    <li><a href="#" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Reports</a></li>
-                    <li><a href="#" data-section="manage-menu"><i class="fas fa-shopping-cart"></i> Admin Notifications</a></li>
+                    <li><a href="#" data-section="reports"><i class="fas fa-tachometer-alt"></i> Reports</a></li>
+                    <li><a href="#" data-section="admin-notification"><i class="fas fa-shopping-cart"></i> Admin Notifications</a></li>
                     <li><a href="#" data-section="sales-trends"><i class="fas fa-cogs"></i> Sales Insights</a></li>
                     <li><a href="#" data-section="customer-insights"><i class="fas fa-comment"></i> Customer Insights</a></li>
                 </ul>
@@ -523,6 +523,7 @@
                         </div>
                     </div>
                 </div>
+                <button onclick="location.href='/reports'">Reports</button>
             </div>
         </div>
     </div>
@@ -665,7 +666,8 @@ const ipoPerformanceChart = new Chart(ipoPerformanceCtx, {
         'api-manager': `<h1>API Manager</h1><p>Manage your API integrations here.</p>`,
         accounts: `<h1>Accounts</h1><p>View and manage account information.</p>`,
         help: `<h1>Help</h1><p>Get help and support here.</p>`,
-        'sales-trends': `<iframe src="{{ url_for('sales_trends') }}" style="width:100%; height:100vh; border:none;"></iframe>`
+        'sales-trends': `<iframe src="{{ url_for('sales_trends') }}" style="width:100%; height:100vh; border:none;"></iframe>`,
+        'reports': `<iframe src="{{ url_for('reports') }}" style="width:100%; height:100vh; border:none;"></iframe>`
     };
 
     sidebarLinks.forEach(link => {
