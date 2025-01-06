@@ -48,21 +48,107 @@
             color: #5cb85c;
             font-size: 16px;
         }
+
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #FFD3D3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Navbar links styled as buttons */
+        .navbar a {
+            text-decoration: none;
+            color: black;
+            margin: 0 10px;
+            font-weight: bold;
+            padding: 10px 20px; /* Button-like padding */
+            border: 2px solid #ff6f61; /* Border for buttons */
+            border-radius: 5px; /* Rounded corners for a button look */
+            background-color: #FFD3D3; /* Light background color for buttons */
+            transition: all 0.3s ease; /* Transition effect for smooth hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for 3D effect */
+        }
+
+        /* Hover effect for navbar links */
+        .navbar a:hover {
+            background-color: #ff6f61; /* Change background on hover */
+            color: white; /* Change text color on hover */
+            transform: scale(1.1); /* Slightly enlarge the button */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover for 3D effect */
+        }
+
+        /* Animation for navbar links on page load */
+        .navbar a {
+            opacity: 0;
+            animation: fadeInNav 1.5s ease-in-out forwards; /* Fade-in effect */
+        }
+
+        /* Animation delays for each navbar link */
+        .navbar a:nth-child(1) {
+            animation-delay: 0.5s; /* Delay for 'Home' link */
+        }
+
+        .navbar a:nth-child(2) {
+            animation-delay: 1s; /* Delay for 'Sign In' link */
+        }
+
+        .navbar a:nth-child(3) {
+            animation-delay: 1.5s; /* Delay for 'Register' link */
+        }
+
+        .navbar a:nth-child(4) {
+            animation-delay: 2s; /* Delay for 'Contact' link */
+        }
+
+        /* Keyframe for navbar link fade-in and slide effect */
+        @keyframes fadeInNav {
+            from {
+                opacity: 0;
+                transform: translateY(-10px); /* Start slightly above */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* End at normal position */
+            }
+        }
+
+        /* Background image styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #F17272, #fff3a7);
+            height: 100vh;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-logo">
-            <img src="{{ url_for('static', filename='images/hifilogo.png') }}" alt="Logo">
-            <span>Hifi Delivery Eats</span>
+    <div class="navbar">
+        <div class="logo">
+            <img src="/static/images/hifilogo.png" alt="Logo" style="height: 40px;">
         </div>
-        <div class="nav-links">
-            <a href="#" class="active">Home</a>
+        <div>
+            <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('signin') }}">Sign In</a>
-            <a href="#">Contact</a>
+            <a href="{{ url_for('signup') }}">Register</a>
+            <a href="#contact">Contact</a>
         </div>
-    </nav>
+    </div>
 
     <!-- Main Section -->
     <div class="main-container">
