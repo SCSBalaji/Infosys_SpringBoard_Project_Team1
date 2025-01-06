@@ -959,6 +959,10 @@ def add_delivery(order_id, agent_id, status, pickup_time, delivery_time):
     conn.commit()
     conn.close()
 
+@app.route('/restaurant_dashboard')
+def restaurant_dashboard():
+    return render_template('restaurant_dashboard.html')
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)
