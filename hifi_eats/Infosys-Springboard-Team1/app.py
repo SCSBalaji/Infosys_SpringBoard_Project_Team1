@@ -965,6 +965,10 @@ def add_delivery(order_id, agent_id, status, pickup_time, delivery_time):
 def restaurant_dashboard():
     return render_template('restaurant_dashboard.html')
 
+@app.route('/admin_notifications')
+def admin_notifications():
+    return render_template('admin_notifications.html')
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #ea7c7c, #fcec83);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-image {
+            width: 100%;
+            height: 50vh;
+            background-image: url('/static/images/background_image.jpg');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .header-image::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        .notification-container {
+            background-color: white;
+            width: 75%; /* Changed from 90% to 75% */
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .notification-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d22d2d;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .notification-item {
+            background-color: #ffd9d9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: yellow;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: red;
+            flex-shrink: 0;
+        }
+
+        .notification-text {
+            flex-grow: 1;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-image"></div>
+    <div class="notification-container">
+        <div class="notification-header">NOTIFICATIONS</div>
+        <div class="notification-item">
+            <div class="notification-icon">🔔</div>
+            <div class="notification-text">New table reservation for tonight at 7 PM.</div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-icon">🔔</div>
+            <div class="notification-text">Inventory alert: Low stock of tomatoes.</div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-icon">🔔</div>
+            <div class="notification-text">Order #4567 has been placed successfully.</div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-icon">🔔</div>
+            <div class="notification-text">Customer feedback received: "Great service and delicious food!"</div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-icon">🔔</div>
+            <div class="notification-text">Reminder: Staff meeting scheduled for tomorrow at 3 PM.</div>
+        </div>
+    </div>
+</body>
+</html>
