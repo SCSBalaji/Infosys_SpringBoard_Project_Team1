@@ -24,7 +24,7 @@ from reportlab.pdfgen import canvas
 import tempfile
 load_dotenv()  # Load environment variables from .env file
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = 'supersecretkey'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, 'existing_database.db')
@@ -653,7 +653,9 @@ def is_admin():
 def index():
     return render_template('index.html')
 
-
+@app.route('/reports')
+def reports():
+    return render_template('reports.html')
 
 @app.route('/admin/deactivate_user/<int:user_id>')
 def deactivate_user(user_id):

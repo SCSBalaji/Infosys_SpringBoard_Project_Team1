@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report Generator</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #ea7c7c, #fcec83);
+            height: 100%;
+        }
+        .navbar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #FFD3D3;
+        }
+        .navbar button {
+            background: none;
+            border: none;
+            color: black;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .header-image {
+            width: 100%;
+            height: 50vh;
+            background-image: url('/static/images/pancakes.jpg'); 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .header-image::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            filter: brightness(0.7);
+            z-index: -1;
+        }
+        /*.content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            flex-grow: 1;
+            padding: 20px;
+        }*/
+        .content {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+        }
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 200%; 
+        }
+        /*.page {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }*/
+        .page {
+            width: 100%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        /*.page.active {
+            display: flex;
+            height: 600px;
+            width: 1200px;
+            background-color: azure;
+            border-radius: 20px;
+        }*/
+        .page.active {
+            height: 600px;
+            width: 1200px;
+            background-color: azure;
+            border-radius: 20px;
+        }
+        .date-picker {
+            margin-bottom: 20px;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 90%;
+        }
+        .card {
+            background-color: #f0ad4e;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            width: 250px;
+            margin: 20px;
+            text-align: center;
+        }
+        .card img {
+            width: 50px;
+
+            margin-bottom: 10px;
+        }
+        .card button {
+            background-color: #ffcc00;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .recent-reports {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            margin-top: 20px;
+        }
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .report-item button {
+            margin-left: 10px;
+        }
+        .horizontal-line {
+            width: 90%; /* Matches the width of the cards */
+            height: 2px;
+            background-color: #333;
+            margin: 10px 0;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%; /* Matches the width of the cards */
+            margin-bottom: 10px; /* Adds spacing below the heading and input */
+        }
+        .content-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+   
+
+    <div class="header-image">
+         <div class="navbar">
+            <button onclick="navigateOtherPage()">Back</button>
+        </div>
+        <div class="content">
+            <div id="create-report" class="page active">
+                <div class="content-header">
+                    <h2>Reports</h2>
+                    <!-- <input type="date" class="date-picker" id="date-range-header" /> -->
+                     <div class="date-picker">
+                        <input type="date" id="date-range" placeholder="Select Date" />
+                    </div>
+                </div>
+                <div class="horizontal-line"></div>
+                <div class="navbar">
+                    <button onclick="showPage('create-report')">Create Report</button>
+                    <button onclick="showPage('recent-report')">Recent Reports</button>
+                </div>
+                <div class="horizontal-line"></div>
+                <div class="cards">
+                    <div class="card">
+                        <img src="/static/images/bargraph.png" alt="Bar Graph">
+                        <p>Bar Graph</p>
+                        <button onclick="generateReport('Bar Graph')">Generate</button>
+                    </div>
+                    <div class="card">
+                        <img src="/static/images/histogram.png" alt="Histogram">
+                        <p>Histogram</p>
+                        <button onclick="generateReport('Histogram')">Generate</button>
+                    </div>
+                    <div class="card">
+                        <img src="/static/images/piechart.png" alt="Pie Chart">
+                        <p>Pie Chart</p>
+                        <button onclick="generateReport('Pie Chart')">Generate</button>
+                    </div>
+                    <div class="card">
+                        <img src="/static/images/linegraph.png" alt="Line Graph">
+                        <p>Line Graph</p>
+                        <button onclick="generateReport('Line Graph')">Generate</button>
+                    </div>
+                    <div class="card">
+                        <img src="/static/images/bubble graph.png" alt="Bubble Graph">
+                        <p>Bubble Graph</p>
+                        <button onclick="generateReport('Bubble Graph')">Generate</button>
+                    </div>
+                    <div class="card">
+                        <img src="/static/images/scattergraph.png" alt="Scatter Graph">
+                        <p>Scatter Graph</p>
+                        <button onclick="generateReport('Scatter Graph')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div id="recent-report" class="page1">
+                <h2>Recent Reports</h2>
+                <div class="recent-reports1" id="recent-reports-list"></div>
+            </div> 
+        </div>
+    </div>
+    <script>
+        let recentReports = [];
+    
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+    
+            const selectedPage = document.getElementById(pageId);
+            selectedPage.classList.add('active');
+    
+            const cardsContainer = document.querySelector('.cards');
+            const recentReportsContainer = document.getElementById('recent-reports-list');
+    
+            if (pageId === 'create-report') {
+                cardsContainer.style.display = 'grid';
+                recentReportsContainer.style.display = 'none';
+            } else if (pageId === 'recent-report') {
+                cardsContainer.style.display = 'none';
+                recentReportsContainer.style.display = 'block';
+            }
+        }
+    
+        function generateReport(graphType) {
+            const dateRange = document.getElementById('date-range').value;
+            if (!dateRange) {
+                alert('Please select a date first!');
+                return;
+            }
+            const report = {
+                type: graphType,
+                dateRange: dateRange,
+                timestamp: new Date().toLocaleString(),
+                content: `Report Type: ${graphType}\nDate Range: ${dateRange}\nGenerated On: ${new Date().toLocaleString()}`
+            };
+            recentReports.push(report);
+            updateRecentReports();
+            alert(`${graphType} report generated!`);
+    
+            downloadReport(report);
+        }
+    
+        function downloadReport(report) {
+            const fileName = `${report.type}_Report_${report.dateRange}.txt`;
+            const blob = new Blob([report.content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+    
+        function viewReport(type) {
+            const report = recentReports.find(r => r.type === type);
+            if (report) {
+                alert(`Viewing Report:\n\n${report.content}`);
+            } else {
+                alert('Report not found!');
+            }
+        }
+    
+        function updateRecentReports() {
+            const list = document.getElementById('recent-reports-list');
+            list.innerHTML = '';
+            recentReports.forEach(report => {
+                const item = document.createElement('div');
+                item.className = 'report-item';
+                item.innerHTML = `
+                    <span>${report.type} - ${report.dateRange} (${report.timestamp})</span>
+                    <div>
+                        <button onclick="downloadReport(recentReports.find(r => r.type === '${report.type}'))">Download</button>
+                        <button onclick="viewReport('${report.type}')">View</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+    
+        function navigateOtherPage() {
+            window.location.href = 'other-page.html';
+        }
+    </script>
+    
+
+</body>
+</html>
