@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Anomalies Dashboard</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .anomalies-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .high-risk {
+            background-color: #ffe6e6;
+        }
+
+        .button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .investigate-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .refresh-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .investigation-status {
+            color: #ff6b00;
+            font-weight: bold;
+        }
+
+        .investigate-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        @keyframes highlight {
+            0% { background-color: #fff; }
+            50% { background-color: #fff3e0; }
+            100% { background-color: #fff; }
+        }
+
+        .status-updated {
+            animation: highlight 1s ease-in-out;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .complete-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .approved-status {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .flagged-status {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .investigation-complete {
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .complete-investigation-btn {
+            background-color: #ffc107;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Anomalies Dashboard</h1>
+        <div class="controls">
+            <button onclick="addTestOrder()" class="button add-btn">Add Test Order</button>
+            <button onclick="fetchAnomalies()" class="button refresh-btn">Refresh Data</button>
+        </div>
+        <div class="anomalies-container">
+            <table id="anomaliesTable">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Date & Time</th>
+                        <th>Anomaly Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="anomaliesBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        let lastFetchTime = 0;
+        const FETCH_COOLDOWN = 1000; // 1 second cooldown between refreshes
+
+        window.fetchAnomalies = function() {
+            const now = Date.now();
+            if (now - lastFetchTime < FETCH_COOLDOWN) {
+                return; // Prevent too frequent refreshes
+            }
+            lastFetchTime = now;
+
+            fetch('/api/order-anomalies')
+                .then(response => response.json())
+                .then(data => {
+                    displayAnomalies(data.anomalies);
+                })
+                .catch(error => {
+                    console.error('Error fetching anomalies:', error);
+                });
+        }
+
+        function displayAnomalies(anomalies) {
+            const tbody = document.getElementById('anomaliesBody');
+            const fragment = document.createDocumentFragment();
+
+            anomalies.forEach(anomaly => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-order-id', anomaly.order_id);
+                
+                if (anomaly.anomaly_type === 'High price') {
+                    row.classList.add('high-risk');
+                }
+                
+                const statusClass = getStatusClass(anomaly.order_status);
+                
+                row.innerHTML = `
+                    <td>${anomaly.order_id}</td>
+                    <td>${anomaly.customer_email}</td>
+                    <td>$${anomaly.total_price.toFixed(2)}</td>
+                    <td class="${statusClass}">${anomaly.order_status}</td>
+                    <td>${anomaly.delivery_location}</td>
+                    <td>${anomaly.order_time}</td>
+                    <td>${anomaly.anomaly_type}</td>
+                    <td>
+                        ${getActionButton(anomaly)}
+                    </td>
+                `;
+                
+                if (anomaly.investigation_notes) {
+                    row.setAttribute('title', `Investigation Notes: ${anomaly.investigation_notes}`);
+                }
+                
+                fragment.appendChild(row);
+            });
+
+            tbody.innerHTML = '';
+            tbody.appendChild(fragment);
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Under Investigation') return 'investigation-status';
+            if (status === 'Investigation approved') return 'approved-status';
+            if (status === 'Investigation flagged') return 'flagged-status';
+            return '';
+        }
+
+        function getActionButton(anomaly) {
+            if (anomaly.order_status === 'Under Investigation') {
+                return `
+                    <button class="button complete-investigation-btn" 
+                            onclick="showInvestigationModal(${anomaly.order_id})">
+                        Complete Investigation
+                    </button>
+                `;
+            } else if (anomaly.order_status.startsWith('Investigation')) {
+                return `
+                    <span class="investigation-complete">
+                        Completed ${anomaly.investigation_date || ''}
+                    </span>
+                `;
+            } else {
+                return `
+                    <button class="button investigate-btn" 
+                            onclick="investigateAnomaly(${anomaly.order_id})">
+                        Investigate
+                    </button>
+                `;
+            }
+        }
+
+        window.investigateAnomaly = function(orderId) {
+            if (!confirm(`Are you sure you want to investigate Order #${orderId}?`)) {
+                return;
+            }
+
+            fetch(`/api/investigate-order/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    fetchAnomalies();
+                } else {
+                    alert('Failed to update order status: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the order status');
+            });
+        }
+
+        window.addTestOrder = function() {
+            fetch('/api/add-test-order')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('New order added:', data);
+                    fetchAnomalies();
+                })
+                .catch(error => {
+                    console.error('Error adding test order:', error);
+                });
+        }
+
+        // Add this function for the investigation modal
+        function showInvestigationModal(orderId) {
+            const modalHtml = `
+                <div id="investigationModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Complete Investigation for Order #${orderId}</h2>
+                        <div class="form-group">
+                            <label>Investigation Notes:</label>
+                            <textarea id="investigationNotes" rows="4" placeholder="Enter your investigation findings..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Action:</label>
+                            <select id="investigationAction">
+                                <option value="approved">Approve Order</option>
+                                <option value="flagged">Flag as Suspicious</option>
+                            </select>
+                        </div>
+                        <div class="modal-buttons">
+                            <button onclick="completeInvestigation(${orderId})" class="button complete-btn">Complete Investigation</button>
+                            <button onclick="closeModal()" class="button cancel-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('investigationModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function completeInvestigation(orderId) {
+            const notes = document.getElementById('investigationNotes').value;
+            const action = document.getElementById('investigationAction').value;
+
+            fetch(`/api/complete-investigation/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    notes: notes,
+                    action: action
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    closeModal();
+                    fetchAnomalies();
+                } else {
+                    alert('Failed to complete investigation: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while completing the investigation');
+            });
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', fetchAnomalies);
+    </script>
+</body>
+</html>
