@@ -141,9 +141,14 @@
 </head>
 <body>
     <h1>Sales Trends</h1>
-    <img src="data:image/png;base64,{{ plot_url }}">
 
-    <form method="GET" action="{{ url_for('sales_trends') }}">
+    {% if plot_url %}
+        <!-- Show chart image if available -->
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Sales Trend Chart">
+    {% endif %}
+
+    <!-- Form for selecting period and chart type -->
+    <form method="POST" action="{{ url_for('sales_trends') }}">
         <div>
             <label for="period">Period:</label>
             <select id="period" name="period">
@@ -161,9 +166,12 @@
             </select>
         </div>
 
-        <button type="submit">Generate Chart</button>
+        <!-- Button to generate the chart -->
+        <button type="submit" name="download" value="false">Generate Chart</button>
+        
+        <!-- Button to download the chart -->
+        <button type="submit" name="download" value="true">Download Chart</button>
     </form>
 
     <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
 </body>
-</html>
