@@ -14,12 +14,12 @@ import bcrypt
 import secrets
 import matplotlib.pyplot as plt 
 import io 
-import numpy as np
 import seaborn as sns
 import base64
 import pandas as pd
 import matplotlib.dates as mdates
 from flask import send_file
+from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import tempfile
 load_dotenv()  # Load environment variables from .env file
@@ -411,13 +411,28 @@ def top_selling_items():
     
     return render_template('top_selling_items.html', plot_url=None, selected_month=None)
 
-from flask import Flask, request, render_template, send_file, flash, session
+
+@app.route('/sales_trends', methods=['GET'])
+def sales_trends():
+    period = request.args.get('period', 'monthly')
+    chart_type = request.args.get('chart_type', 'line')
+    
+    plot_url, _ = generate_sales_trend_chart_with_peaks(period, chart_type)
+    print(plot_url)  # Check if this is a valid base64 string
+    
+    return render_template(
+        'sales_trends.html',
+        plot_url=plot_url,
+        period=period,
+        chart_type=chart_type
+    )
+
+from flask import send_file
 from reportlab.lib.pagesizes import letter
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
-
-
+from reportlab.pdfgen import canvas
+import io
+import os
+import tempfile
 
 def send_email_with_attachment(recipient_email, attachment_path):
     msg = MIMEMultipart()
@@ -425,6 +440,7 @@ def send_email_with_attachment(recipient_email, attachment_path):
     msg['To'] = recipient_email
     msg['Subject'] = "Sales Report"
 
+    # Attach PDF file
     part = MIMEBase('application', 'octet-stream')
     with open(attachment_path, 'rb') as attachment:
         part.set_payload(attachment.read())
@@ -432,35 +448,60 @@ def send_email_with_attachment(recipient_email, attachment_path):
     part.add_header('Content-Disposition', f'attachment; filename="sales_report.pdf"')
     msg.attach(part)
 
+    # Send email
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.send_message(msg)
 
+@app.route('/download_sales_report')
+def download_sales_report():
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    
+    # Fetch sales data
+    period = request.args.get('period', 'monthly')  # Get the period from query params (daily, weekly, monthly)
+    chart_type = request.args.get('chart_type', 'line')  # Get the chart type from query params (line, bar)
+    sales_data = fetch_sales_data(period)
+    df = pd.DataFrame(sales_data, columns=['period', 'total_sales'])
+    
+    # Add title and sales data table to the PDF
+    p.setFont("Helvetica", 14)
+    p.drawString(30, height - 40, f"Sales Report ({period.capitalize()})")
+    
+    p.setFont("Helvetica", 10)
+    x, y = 30, height - 60
+    for index, row in df.iterrows():
+        p.drawString(x, y, f"{row['period']}: {row['total_sales']}")
+        y -= 12
 
-@app.route('/sales_trends', methods=['GET', 'POST'])
-def sales_trends():
-    if request.method == 'POST':
-        period = request.form.get('period', 'monthly')
-        chart_type = request.form.get('chart_type', 'line')
-
-        # Generate the chart
-        plot_url, img_buffer = generate_sales_trend_chart_with_peaks(period, chart_type)
-
-        if img_buffer is None:
-            return "Failed to generate chart", 500
-
-        # Check if the user clicked the download button
-        if 'download' in request.form and request.form['download'] == 'true':
-            return send_file(io.BytesIO(img_buffer.getvalue()), 
-                             mimetype='image/png',
-                             as_attachment=True,
-                             download_name='sales_trend_chart.png')
-
-        # Otherwise, show the generated chart
-        return render_template('sales_trends.html', plot_url=plot_url)
-
-    # For GET requests, render the form
-    return render_template('sales_trends.html')
+    # Generate the chart and save as a temporary file
+    plot_url, img_buffer = generate_sales_trend_chart_with_peaks(period, chart_type)
+    temp_file_path = tempfile.NamedTemporaryFile(delete=False, suffix=".png").name
+    with open(temp_file_path, 'wb') as f:
+        f.write(img_buffer.getvalue())
+    
+    # Add the chart image to the PDF
+    p.drawImage(temp_file_path, x, y - 200, width - 2 * x, 200)
+    
+    p.showPage()
+    p.save()
+    
+    # Save the buffer content to a temporary PDF file
+    pdf_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    with open(pdf_temp_file.name, 'wb') as f:
+        f.write(buffer.getvalue())
+    
+    # Send email with PDF attachment
+    recipient_email = "recipient_email@gmail.com"  # Replace with recipient email address
+    send_email_with_attachment(recipient_email, pdf_temp_file.name)
+    
+    # Clean up the temporary files
+    buffer.seek(0)
+    os.remove(temp_file_path)
+    os.remove(pdf_temp_file.name)
+    
+    return send_file(buffer, as_attachment=True, download_name="sales_report.pdf", mimetype='application/pdf')
 
 def highlight_peaks(df, ax):
     peak_threshold = df['total_sales'].mean() + df['total_sales'].std()  # Example threshold
@@ -470,85 +511,28 @@ def highlight_peaks(df, ax):
         ax.annotate('Peak', xy=(row['period'], row['total_sales']), xytext=(row['period'], row['total_sales'] + 5),
                     arrowprops=dict(facecolor='red', shrink=0.05),
                     horizontalalignment='center', verticalalignment='bottom')
-
-def highlight_peaks(df, ax):
-    max_value = df['total_sales'].max()
-    max_period = df.loc[df['total_sales'].idxmax(), 'period']
-    ax.annotate(f"Peak: {max_value}", xy=(max_period, max_value), 
-                xytext=(max_period, max_value + 10),
-                arrowprops=dict(facecolor='red', arrowstyle='->'),
-                fontsize=10, color='red')
-
-# Sample data for generating sales reports
-# Sample sales data for generating reports
-data = {
-    'Date': pd.date_range(start='2023-01-01', periods=100, freq='D'),
-    'Sales': np.random.randint(100, 500, size=100)
-}
-
-df = pd.DataFrame(data)
-
-@app.route('/report')
-def report():
-    return render_template('reports.html')
-
-@app.route('/generate_report', methods=['POST'])
-def generate_report():
-    graph_type = request.json.get('graphType')
-    date_range = request.json.get('dateRange')
-    
-    start_date, end_date = date_range.split(' - ')
-    filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
-    
-    img = io.BytesIO()
-    if graph_type == 'Bar Graph':
-        filtered_df.plot(kind='bar', x='Date', y='Sales')
-    elif graph_type == 'Histogram':
-        filtered_df['Sales'].plot(kind='hist')
-    elif graph_type == 'Pie Chart':
-        filtered_df.groupby('Date')['Sales'].sum().plot(kind='pie')
-    elif graph_type == 'Line Graph':
-        filtered_df.plot(kind='line', x='Date', y='Sales')
-    elif graph_type == 'Bubble Graph':
-        plt.scatter(filtered_df['Date'], filtered_df['Sales'], s=filtered_df['Sales'])
-    elif graph_type == 'Scatter Graph':
-        filtered_df.plot(kind='scatter', x='Date', y='Sales')
-    
-    plt.savefig(img, format='png')
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()
-    
-    return jsonify({'plot_url': plot_url})
-
-def highlight_peaks(df, ax):
-    max_value = df['total_sales'].max()
-    max_period = df.loc[df['total_sales'].idxmax(), 'period']
-    ax.annotate(f"Peak: {max_value}", xy=(max_period, max_value), 
-                xytext=(max_period, max_value + 10),
-                arrowprops=dict(facecolor='red', arrowstyle='->'),
-                fontsize=10, color='red')
-
 def generate_sales_trend_chart_with_peaks(period='monthly', chart_type='line'):
     data = fetch_sales_data(period)
-    if not data:
-        return None, None
     
     df = pd.DataFrame(data, columns=['period', 'total_sales'])
+    
+    # Convert period to datetime
     try:
         if period == 'daily':
             df['period'] = pd.to_datetime(df['period'], format='%Y-%m-%d')
         elif period == 'weekly':
-            df['period'] = pd.to_datetime(df['period'] + '-1', format='%Y-%W-%w')
+            df['period'] = pd.to_datetime(df['period'] + '-1', format='%Y-%W-%w')  # Monday as start of the week
         else:  # monthly
             df['period'] = pd.to_datetime(df['period'], format='%Y-%m')
     except ValueError as e:
         print(f"Error parsing dates: {e}")
-        return None, None
-
+        return None  # Handle the error gracefully
+    
     plt.figure(figsize=(10, 6))
+    
     if chart_type == 'bar':
         ax = df.plot(x='period', y='total_sales', kind='bar', color='skyblue')
-    else:
+    else:  # line chart
         ax = df.plot(x='period', y='total_sales', marker='o', linestyle='-', color='skyblue')
     
     highlight_peaks(df, ax)
@@ -557,6 +541,16 @@ def generate_sales_trend_chart_with_peaks(period='monthly', chart_type='line'):
     plt.ylabel('Total Sales')
     plt.title(f'Sales Trends ({period.capitalize()})')
     plt.xticks(rotation=45)
+    
+    # Set date format on x-axis
+    if period == 'daily':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    elif period == 'weekly':
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%W'))
+    else:  # monthly
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    
+    plt.tight_layout()
     
     img_buffer = io.BytesIO()
     plt.savefig(img_buffer, format='png')
@@ -627,7 +621,7 @@ def fetch_sales_data(period='monthly'):
 def admin_dashboard():
     if not is_admin():
         flash('Access denied. Admins only.', 'error')
-        return redirect(url_for('report'))
+        return redirect(url_for('index'))
 
     conn = get_db()
     cursor = conn.cursor()
@@ -980,11 +974,6 @@ def logout():
     session.pop('user', None)
     flash('You have been logged out.')
     return redirect(url_for('signin'))
-
-def validate_email(email):
-    import re
-    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    return re.match(email_regex, email) is not None
 
 if __name__ == '__main__':
     app.run(debug=True)
