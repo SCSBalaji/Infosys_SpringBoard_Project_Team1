@@ -1,7 +1,6 @@
 import sqlite3
 import random
 import jwt
-import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,6 +21,7 @@ from flask import send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import tempfile
+from datetime import datetime, timedelta
 load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__, static_folder='static')
@@ -974,6 +974,97 @@ def logout():
     session.pop('user', None)
     flash('You have been logged out.')
     return redirect(url_for('signin'))
+
+@app.route('/anomalies')
+def anomalies():
+    return render_template('anomalies.html')
+
+# Mock data to simulate orders
+mock_orders = [
+    {
+        "order_id": 1,
+        "customer_id": 101,
+        "customer_email": "user1@example.com",
+        "order_date": (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'),
+    },
+    {
+        "order_id": 2,
+        "customer_id": 102,
+        "customer_email": "user2@example.com",
+        "total_price": 3500.00,  # Anomaly: High price
+        "order_status": "processing",
+        "delivery_location": "456 Oak St, City",
+        "order_date": datetime.now().strftime('%Y-%m-%d'),
+        "order_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+]
+
+@app.route('/api/order-anomalies', methods=['GET'])
+def get_order_anomalies():
+    mock_orders = [
+        # Example mock orders
+        {'order_id': 1, 'total_price': 100},
+        {'order_id': 2, 'total_price': 200},
+        # Add more mock orders as needed
+    ]
+    
+    try:
+        avg_price = sum(order['total_price'] for order in mock_orders if 'total_price' in order) / len(mock_orders)
+    except ZeroDivisionError:
+        avg_price = 0  # Handle case where mock_orders is empty
+
+    return jsonify({'average_price': avg_price})
+
+@app.route('/api/add-test-order')
+def add_test_order():
+    new_order = {
+        "order_id": len(mock_orders) + 1,
+        "customer_id": random.randint(101, 105),
+        "customer_email": f"user{random.randint(1,5)}@example.com",
+        "total_price": random.uniform(100, 5000),
+        "order_status": random.choice(["pending", "processing", "completed"]),
+        "delivery_location": f"{random.randint(100,999)} Test St, City",
+        "order_date": datetime.now().strftime('%Y-%m-%d'),
+        "order_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    mock_orders.append(new_order)
+    return jsonify({"message": "Test order added", "order": new_order})
+
+@app.route('/api/investigate-order/<int:order_id>', methods=['POST'])
+def investigate_order(order_id):
+    for order in mock_orders:
+        if order['order_id'] == order_id:
+            order['order_status'] = 'Under Investigation'
+            return jsonify({
+                'success': True,
+                'message': f'Order #{order_id} is now under investigation',
+                'order': order
+            })
+    
+    return jsonify({
+        'success': False,
+        'message': f'Order #{order_id} not found'
+    }), 404
+
+@app.route('/api/complete-investigation/<int:order_id>', methods=['POST'])
+def complete_investigation(order_id):
+    for order in mock_orders:
+        if order['order_id'] == order_id:
+            action = request.json.get('action', 'approved')  # 'approved' or 'flagged'
+            order['order_status'] = f'Investigation {action}'
+            order['investigation_notes'] = request.json.get('notes', '')
+            order['investigation_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            return jsonify({
+                'success': True,
+                'message': f'Order #{order_id} investigation completed: {action}',
+                'order': order
+            })
+    
+    return jsonify({
+        'success': False,
+        'message': f'Order #{order_id} not found'
+    }), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
